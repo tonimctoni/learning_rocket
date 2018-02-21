@@ -1,0 +1,68 @@
+body
+{
+    background-image: url("/space.png");
+    background-repeat: repeat;
+    /*background-color: black;*/
+}
+
+div.choose_name_form_container_class
+{
+/*     position: absolute; */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background: linear-gradient(to bottom right, #110022, #440066);
+    width: 25%;
+    border: 1pt solid #440088;
+    border-radius: 6px;
+/*     margin: 20pt; */
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+h1.choose_name_form_title_class
+{
+    color: #777722;/*AAFFAA*/
+}
+
+input.choose_name_input_class
+{
+    width: 70%;
+    border: 2pt solid black;
+    border-radius: 6px;
+    background-color: black;
+    color: white;
+/*     margin: 4pt; */
+    margin-bottom: 8pt;
+    transition-duration: 0.25s;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+}
+input.choose_name_input_class:focus
+{
+   width: 80%;
+}
+input.choose_name_input_class:hover
+{
+   background-color: #2A0044;
+/*    background-color: #220000; */
+}
+
+button.choose_name_button_class
+{
+    outline: 0;
+    background-color: black;
+    color: white;
+    /*margin-bottom: 8pt;*/
+    border: 0;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition-duration: 5s;
+}
+button.choose_name_button_class:hover
+{
+    background-color: #7FFFFF;
+}

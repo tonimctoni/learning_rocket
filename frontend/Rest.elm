@@ -6,18 +6,17 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 --elm-package install elm-lang/http
 
-send_data: Model -> Cmd Msg
-send_data model =
+send_message: Model -> Cmd Msg
+send_message model =
   let
     body =
       [ ("name", Encode.string model.name)
-      , ("nick", Encode.string model.nick)
-      , ("password", Encode.string model.password)
+      , ("message", Encode.string model.message)
       ]
       |> Encode.object
       |> Http.jsonBody
 
-    return_string_decoder = Decode.map ReturnString
-      (Decode.field "return_string" Decode.string)
+    return_int_decoder = Decode.map (\i -> i)
+      (Decode.field "return_int" Decode.int)
   in
-    Http.send SendDataReturn (Http.post "/receive_data" (body) return_string_decoder)
+    Http.send SendMessageReturn (Http.post "/post_message" (body) return_int_decoder)

@@ -5,9 +5,9 @@ extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde;
 
 use std::io;
+use std::path::{Path, PathBuf};
 use rocket::response::NamedFile;
 use rocket_contrib::{Json};
 
@@ -16,21 +16,30 @@ fn index() -> io::Result<NamedFile> {
     NamedFile::open("frontend/index.html")
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Data {
-    name: String,
-    nick: String,
-    password: String
+// #[get("/favicon.ico")]
+// fn favicon() -> io::Result<NamedFile> {
+//     NamedFile::open("resources/favicon.ico")
+// }
+
+#[get("/<file..>")]
+fn files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("resources/").join(file)).ok()
 }
 
-#[post("/receive_data", format = "application/json", data = "<data>")]
-fn receive_data(data: Json<Data>) -> Json{
-    println!("{:?}", data);
+#[derive(Serialize, Deserialize, Debug)]
+struct Message {
+    name: String,
+    message: String,
+}
+
+#[post("/post_message", format = "application/json", data = "<message>")]
+fn post_message(message: Json<Message>) -> Json{
+    println!("{:?}", message);
     Json(json!({
         "return_string": "value"
     }))
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index, receive_data]).launch();
+    rocket::ignite().mount("/", routes![index, post_message, files]).launch();
 }

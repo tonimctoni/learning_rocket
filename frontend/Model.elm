@@ -2,23 +2,25 @@ module Model exposing (..)
 
 import Http
 
-type alias ReturnString =
-  { return_string: String
-  }
-
 type Msg
   = SetName String
-  | SetNick String
-  | SetPassword String
-  | SendData
-  | SendDataReturn (Result Http.Error ReturnString)
+  | SetMessage String
+  | OkName
+  | GoToChooseName
+  | SendMessage
+  | SendMessageReturn (Result Http.Error Int)
+
+type Site
+  = ChooseName
+  | Chat
 
 type alias Model =
   { name: String
-  , nick: String
-  , password: String
+  , message: String
+  , messages: List String
   , status_string: String
+  , site: Site
   }
 
 init: (Model, Cmd Msg)
-init = (Model "" "" "" "", Cmd.none)
+init = (Model "" "" ["A","B","C"] "" ChooseName, Cmd.none)
