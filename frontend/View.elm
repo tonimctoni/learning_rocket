@@ -8,7 +8,7 @@ import Html.Events exposing (onClick, onInput)
 message_input: Model -> Html Msg
 message_input model =
   div [style [("padding", "10pt")]]
-  [ p [style [("font-weight", "bold"), ("color", "green")]] [text (model.name++": "), input [style [("width", "75%")], type_ "text", placeholder "Message", onInput SetMessage] []]
+  [ p [style [("font-weight", "bold"), ("color", "green")]] [text (model.name++": "), input [style [("width", "75%")], type_ "text", placeholder "Message", onInput SetMessage, value model.message] []]
   , button [onClick SendMessage, disabled (String.length model.message<1)] [text "Send"]
   ]
 
@@ -21,7 +21,9 @@ message_list_div model =
 chat_div: Model -> Html Msg
 chat_div model =
   div []
-  [ button [style [("position", "fixed"), ("left", "4cm")], onClick GoToChooseName] [text "Change name"]
+  [ p [style [("font-weight", "bold"), ("color", "red")]] [text model.status_string]
+  , button [style [("left", "4cm")], onClick GoToChooseName] [text "Change name"]
+  , text model.status_string
   , message_input model
   , message_list_div model
   ]

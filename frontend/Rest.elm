@@ -20,3 +20,17 @@ send_message model =
       (Decode.field "return_int" Decode.int)
   in
     Http.send SendMessageReturn (Http.post "/post_message" (body) return_int_decoder)
+
+
+get_messages: Model -> Cmd Msg
+get_messages model =
+  let
+    body =
+      [("last_message", Encode.int (List.length model.messages))]
+      |> Encode.object
+      |> Http.jsonBody
+
+    return_messages_decoder = Decode.map (\l -> l)
+      (Decode.field "new_messages" (Decode.list Decode.string))
+  in
+    Http.send GetMessagesReturn (Http.post "/get_messages" (body) return_messages_decoder)

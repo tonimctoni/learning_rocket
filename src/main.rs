@@ -16,11 +16,6 @@ fn index() -> io::Result<NamedFile> {
     NamedFile::open("frontend/index.html")
 }
 
-// #[get("/favicon.ico")]
-// fn favicon() -> io::Result<NamedFile> {
-//     NamedFile::open("resources/favicon.ico")
-// }
-
 #[get("/<file..>")]
 fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("resources/").join(file)).ok()
@@ -36,10 +31,23 @@ struct Message {
 fn post_message(message: Json<Message>) -> Json{
     println!("{:?}", message);
     Json(json!({
-        "return_string": "value"
+        "return_int": 0
+    }))
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct LastMessage {
+    last_message: i64,
+}
+
+#[post("/get_messages", format = "application/json", data = "<last_message>")]
+fn get_messages(last_message: Json<LastMessage>) -> Json{
+    println!("{:?}", last_message);
+    Json(json!({
+        "new_messages": ["AAA".to_string(), "BBB".to_string()]
     }))
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index, post_message, files]).launch();
+    rocket::ignite().mount("/", routes![index, files, post_message, get_messages]).launch();
 }

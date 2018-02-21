@@ -1,6 +1,7 @@
 module Model exposing (..)
 
 import Http
+import Time exposing (Time)
 
 type Msg
   = SetName String
@@ -9,6 +10,9 @@ type Msg
   | GoToChooseName
   | SendMessage
   | SendMessageReturn (Result Http.Error Int)
+  | TimeToCheckForMessages Time
+  --| GetMessages
+  | GetMessagesReturn (Result Http.Error (List String))
 
 type Site
   = ChooseName
@@ -23,4 +27,4 @@ type alias Model =
   }
 
 init: (Model, Cmd Msg)
-init = (Model "" "" ["A","B","C"] "" ChooseName, Cmd.none)
+init = (Model "" "" [] "" ChooseName, Cmd.none)
