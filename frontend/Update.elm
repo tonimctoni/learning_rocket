@@ -25,7 +25,7 @@ update msg model =
   case msg of
     SetName s -> ({model | name=s}, Cmd.none)
     SetMessage s -> ({model | message=s}, Cmd.none)
-    OkName -> (choose_name model, Cmd.none)
+    OkName -> (choose_name model, get_messages model)
     GoToChooseName -> ({model | site=ChooseName, status_string="", name=""}, Cmd.none)
     SendMessage -> (model, send_message model)
     SendMessageReturn (Ok _) -> ({model | message=""}, get_messages model)

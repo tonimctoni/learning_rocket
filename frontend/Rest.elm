@@ -21,7 +21,6 @@ send_message model =
   in
     Http.send SendMessageReturn (Http.post "/post_message" (body) return_int_decoder)
 
-
 get_messages: Model -> Cmd Msg
 get_messages model =
   let
