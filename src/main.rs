@@ -32,20 +32,21 @@ struct Message {
 #[post("/post_message", format = "application/json", data = "<message>")]
 fn post_message(messages: State<Arc<Mutex<Vec<String>>>>, message: Json<Message>) -> Json{
     let Message{name, message}=message.into_inner();
-    {
-        let mut messages=match messages.lock() {
-            Ok(messages) => messages,
+    let return_int={
+        match messages.lock() {
+            Ok(mut messages) => {
+                messages.push(format!("{}: {}", name, message));
+                0
+            },
             Err(e) => {
                 eprintln!("Error: {:?}", e);
-                return Json(json!({
-                    "return_int": 1
-                }))
+                1
             },
-        };
-        messages.push(format!("{}: {}", name, message));
-    }
+        }
+    };
+
     Json(json!({
-        "return_int": 0
+        "return_int": return_int
     }))
 }
 
@@ -59,24 +60,24 @@ fn get_messages(messages: State<Arc<Mutex<Vec<String>>>>, last_message: Json<Las
     const EMPTY_STRING_ARRAY: [String;0] = [];
     let LastMessage{last_message}=last_message.into_inner();
 
-    let messages=match messages.lock() {
-        Ok(messages) => messages,
+    match messages.lock() {
+        Ok(messages) => {
+            if messages.len()>last_message{
+                Json(json!({
+                    "new_messages": messages[last_message..].iter().rev().collect::<Vec<_>>()
+                }))
+            } else {
+                Json(json!({
+                    "new_messages": EMPTY_STRING_ARRAY
+                }))
+            }
+        },
         Err(e) => {
             eprintln!("Error: {:?}", e);
-            return Json(json!({
+            Json(json!({
                 "new_messages": EMPTY_STRING_ARRAY
             }))
         },
-    };
-
-    if messages.len()>last_message{
-        Json(json!({
-            "new_messages": messages[last_message..].iter().rev().collect::<Vec<_>>()
-        }))
-    } else {
-        Json(json!({
-            "new_messages": EMPTY_STRING_ARRAY
-        }))
     }
 }
 

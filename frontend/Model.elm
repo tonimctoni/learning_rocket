@@ -5,13 +5,12 @@ import Time exposing (Time)
 
 type Msg
   = SetName String
-  | SetMessage String
   | OkName
+  | SetMessage String
   | GoToChooseName
   | SendMessage
   | SendMessageReturn (Result Http.Error Int)
   | TimeToCheckForMessages Time
-  --| GetMessages
   | GetMessagesReturn (Result Http.Error (List String))
 
 type Site

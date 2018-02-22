@@ -31,7 +31,5 @@ update msg model =
     SendMessageReturn (Ok _) -> ({model | message=""}, get_messages model)
     SendMessageReturn (Err err) -> ({model | status_string="SendMessage Error: "++(http_err_to_string err)}, Cmd.none)
     TimeToCheckForMessages _ -> (model, get_messages model)
-    --TimeToCheckForMessages _ -> (model, if model.site==Chat then (get_messages model) else Cmd.none)
-    --GetMessages -> (model, get_messages model)
     GetMessagesReturn (Ok arr) -> ({model | messages=List.append arr model.messages}, Cmd.none)
     GetMessagesReturn (Err err) -> ({model | status_string="GetMessages Error: "++(http_err_to_string err)}, Cmd.none)
