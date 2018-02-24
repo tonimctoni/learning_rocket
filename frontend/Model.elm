@@ -12,6 +12,11 @@ type alias Message =
   , message: String
   }
 
+type alias IncommingMessages =
+  { last_message: Int
+  , messages: List Message
+  }
+
 type Msg
   = SetName String
   | OkName
@@ -20,7 +25,7 @@ type Msg
   | SendMessage
   | SendMessageReturn (Result Http.Error Int)
   | TimeToCheckForMessages Time
-  | GetMessagesReturn (Result Http.Error (List Message))
+  | GetMessagesReturn (Result Http.Error IncommingMessages)
 
 type alias Model =
   { name: String

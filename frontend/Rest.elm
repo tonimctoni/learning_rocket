@@ -34,8 +34,9 @@ get_messages model =
       (Decode.field "name" Decode.string)
       (Decode.field "message" Decode.string)
 
-    return_messages_decoder: Decode.Decoder (List Message)
-    return_messages_decoder = Decode.map (\l -> l)
+    return_incomming_messages_decoder: Decode.Decoder IncommingMessages
+    return_incomming_messages_decoder = Decode.map2 IncommingMessages
+      (Decode.field "last_message" Decode.int)
       (Decode.field "new_messages" (Decode.list message_decoder))
   in
-    Http.send GetMessagesReturn (Http.post "/get_messages" (body) return_messages_decoder)
+    Http.send GetMessagesReturn (Http.post "/get_messages" (body) return_incomming_messages_decoder)

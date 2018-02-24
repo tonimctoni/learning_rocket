@@ -20,6 +20,13 @@ http_err_to_string err =
     Http.BadStatus _ -> "BadStatus"
     Http.BadPayload s _ -> "BadPayload("++s++")"
 
+handle_incomming_messages: Model -> IncommingMessages -> Model
+handle_incomming_messages model incomming_messages =
+  if incomming_messages.last_message==List.length model.messages then
+    {model | messages=List.append incomming_messages.messages model.messages}
+  else
+    model
+
 update: Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
@@ -31,5 +38,5 @@ update msg model =
     SendMessageReturn (Ok _) -> ({model | message=""}, get_messages model)
     SendMessageReturn (Err err) -> ({model | status_string="SendMessage Error: "++(http_err_to_string err)}, Cmd.none)
     TimeToCheckForMessages _ -> (model, get_messages model)
-    GetMessagesReturn (Ok arr) -> ({model | messages=List.append arr model.messages}, Cmd.none)
+    GetMessagesReturn (Ok incomming_messages) -> (handle_incomming_messages model incomming_messages, Cmd.none)
     GetMessagesReturn (Err err) -> ({model | status_string="GetMessages Error: "++(http_err_to_string err)}, Cmd.none)

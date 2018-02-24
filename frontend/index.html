@@ -9002,6 +9002,10 @@ var _user$project$Model$Message = F2(
 	function (a, b) {
 		return {name: a, message: b};
 	});
+var _user$project$Model$IncommingMessages = F2(
+	function (a, b) {
+		return {last_message: a, messages: b};
+	});
 var _user$project$Model$Model = F5(
 	function (a, b, c, d, e) {
 		return {name: a, message: b, messages: c, status_string: d, site: e};
@@ -9043,11 +9047,10 @@ var _user$project$Rest$get_messages = function (model) {
 		_user$project$Model$Message,
 		A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
 		A2(_elm_lang$core$Json_Decode$field, 'message', _elm_lang$core$Json_Decode$string));
-	var return_messages_decoder = A2(
-		_elm_lang$core$Json_Decode$map,
-		function (l) {
-			return l;
-		},
+	var return_incomming_messages_decoder = A3(
+		_elm_lang$core$Json_Decode$map2,
+		_user$project$Model$IncommingMessages,
+		A2(_elm_lang$core$Json_Decode$field, 'last_message', _elm_lang$core$Json_Decode$int),
 		A2(
 			_elm_lang$core$Json_Decode$field,
 			'new_messages',
@@ -9067,7 +9070,7 @@ var _user$project$Rest$get_messages = function (model) {
 	return A2(
 		_elm_lang$http$Http$send,
 		_user$project$Model$GetMessagesReturn,
-		A3(_elm_lang$http$Http$post, '/get_messages', body, return_messages_decoder));
+		A3(_elm_lang$http$Http$post, '/get_messages', body, return_incomming_messages_decoder));
 };
 var _user$project$Rest$send_message = function (model) {
 	var return_int_decoder = A2(
@@ -9100,6 +9103,16 @@ var _user$project$Rest$send_message = function (model) {
 		_user$project$Model$SendMessageReturn,
 		A3(_elm_lang$http$Http$post, '/post_message', body, return_int_decoder));
 };
+var _user$project$Update$handle_incomming_messages = F2(
+	function (model, incomming_messages) {
+		return _elm_lang$core$Native_Utils.eq(
+			incomming_messages.last_message,
+			_elm_lang$core$List$length(model.messages)) ? _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				messages: A2(_elm_lang$core$List$append, incomming_messages.messages, model.messages)
+			}) : model;
+	});
 var _user$project$Update$http_err_to_string = function (err) {
 	var _p0 = err;
 	switch (_p0.ctor) {
@@ -9205,11 +9218,7 @@ var _user$project$Update$update = F2(
 				if (_p1._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								messages: A2(_elm_lang$core$List$append, _p1._0._0, model.messages)
-							}),
+						_0: A2(_user$project$Update$handle_incomming_messages, model, _p1._0._0),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {

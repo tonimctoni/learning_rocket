@@ -54,6 +54,12 @@ struct LastMessage {
     last_message: usize,
 }
 
+// #[derive(Serialize, Deserialize, Debug)]
+// struct OutgoingMessages{
+//     last_message: usize,
+//     messages: Vec<Message>,
+// }
+
 #[post("/get_messages", format = "application/json", data = "<last_message>")]
 fn get_messages(messages: State<Arc<Mutex<Vec<Message>>>>, last_message: Json<LastMessage>) -> Json{
     const EMPTY_MESSAGE_ARRAY: [Message;0] = [];
@@ -63,12 +69,12 @@ fn get_messages(messages: State<Arc<Mutex<Vec<Message>>>>, last_message: Json<La
         Ok(messages) => {
             if messages.len()>last_message{
                 Json(json!({
-                    // "last_message": last_message,
+                    "last_message": last_message,
                     "new_messages": messages[last_message..].iter().rev().collect::<Vec<_>>()
                 }))
             } else {
                 Json(json!({
-                    // "last_message": last_message,
+                    "last_message": last_message,
                     "new_messages": EMPTY_MESSAGE_ARRAY
                 }))
             }
@@ -76,9 +82,13 @@ fn get_messages(messages: State<Arc<Mutex<Vec<Message>>>>, last_message: Json<La
         Err(e) => {
             eprintln!("Error: {:?}", e);
             Json(json!({
-                // "last_message": last_message,
+                "last_message": last_message,
                 "new_messages": EMPTY_MESSAGE_ARRAY
             }))
+            // Json(OutgoingMessages{
+            //     last_message: last_message,
+            //     messages: Vec::new(),
+            // })
         },
     }
 }
