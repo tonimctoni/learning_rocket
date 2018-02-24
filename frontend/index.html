@@ -9106,12 +9106,14 @@ var _user$project$Rest$send_message = function (model) {
 var _user$project$Update$handle_incomming_messages = F2(
 	function (model, incomming_messages) {
 		return _elm_lang$core$Native_Utils.eq(
+			_elm_lang$core$List$length(incomming_messages.messages),
+			0) ? model : (_elm_lang$core$Native_Utils.eq(
 			incomming_messages.last_message,
 			_elm_lang$core$List$length(model.messages)) ? _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				messages: A2(_elm_lang$core$List$append, incomming_messages.messages, model.messages)
-			}) : model;
+			}) : model);
 	});
 var _user$project$Update$http_err_to_string = function (err) {
 	var _p0 = err;

@@ -22,10 +22,13 @@ http_err_to_string err =
 
 handle_incomming_messages: Model -> IncommingMessages -> Model
 handle_incomming_messages model incomming_messages =
-  if incomming_messages.last_message==List.length model.messages then
-    {model | messages=List.append incomming_messages.messages model.messages}
-  else
+  if List.length incomming_messages.messages==0 then
     model
+  else
+    if incomming_messages.last_message==List.length model.messages then
+      {model | messages=List.append incomming_messages.messages model.messages}
+    else
+      model
 
 update: Msg -> Model -> (Model, Cmd Msg)
 update msg model =
