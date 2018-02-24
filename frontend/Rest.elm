@@ -29,7 +29,13 @@ get_messages model =
       |> Encode.object
       |> Http.jsonBody
 
+    message_decoder: Decode.Decoder Message
+    message_decoder = Decode.map2 Message
+      (Decode.field "name" Decode.string)
+      (Decode.field "message" Decode.string)
+
+    return_messages_decoder: Decode.Decoder (List Message)
     return_messages_decoder = Decode.map (\l -> l)
-      (Decode.field "new_messages" (Decode.list Decode.string))
+      (Decode.field "new_messages" (Decode.list message_decoder))
   in
     Http.send GetMessagesReturn (Http.post "/get_messages" (body) return_messages_decoder)

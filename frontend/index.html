@@ -8998,10 +8998,27 @@ var _elm_lang$http$Http$StringPart = F2(
 		return {ctor: 'StringPart', _0: a, _1: b};
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
+var _user$project$Model$Message = F2(
+	function (a, b) {
+		return {name: a, message: b};
+	});
 var _user$project$Model$Model = F5(
 	function (a, b, c, d, e) {
 		return {name: a, message: b, messages: c, status_string: d, site: e};
 	});
+var _user$project$Model$Chat = {ctor: 'Chat'};
+var _user$project$Model$ChooseName = {ctor: 'ChooseName'};
+var _user$project$Model$init = {
+	ctor: '_Tuple2',
+	_0: A5(
+		_user$project$Model$Model,
+		'',
+		'',
+		{ctor: '[]'},
+		'',
+		_user$project$Model$ChooseName),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
 var _user$project$Model$GetMessagesReturn = function (a) {
 	return {ctor: 'GetMessagesReturn', _0: a};
 };
@@ -9020,20 +9037,12 @@ var _user$project$Model$OkName = {ctor: 'OkName'};
 var _user$project$Model$SetName = function (a) {
 	return {ctor: 'SetName', _0: a};
 };
-var _user$project$Model$Chat = {ctor: 'Chat'};
-var _user$project$Model$ChooseName = {ctor: 'ChooseName'};
-var _user$project$Model$init = {
-	ctor: '_Tuple2',
-	_0: A5(
-		_user$project$Model$Model,
-		'',
-		'',
-		{ctor: '[]'},
-		'',
-		_user$project$Model$ChooseName),
-	_1: _elm_lang$core$Platform_Cmd$none
-};
 var _user$project$Rest$get_messages = function (model) {
+	var message_decoder = A3(
+		_elm_lang$core$Json_Decode$map2,
+		_user$project$Model$Message,
+		A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+		A2(_elm_lang$core$Json_Decode$field, 'message', _elm_lang$core$Json_Decode$string));
 	var return_messages_decoder = A2(
 		_elm_lang$core$Json_Decode$map,
 		function (l) {
@@ -9042,7 +9051,7 @@ var _user$project$Rest$get_messages = function (model) {
 		A2(
 			_elm_lang$core$Json_Decode$field,
 			'new_messages',
-			_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
+			_elm_lang$core$Json_Decode$list(message_decoder)));
 	var body = _elm_lang$http$Http$jsonBody(
 		_elm_lang$core$Json_Encode$object(
 			{
@@ -9371,8 +9380,21 @@ var _user$project$View$message_list_div = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(s),
-						_1: {ctor: '[]'}
+						_0: A3(
+							_elm_lang$html$Html$node,
+							'b',
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									A2(_elm_lang$core$Basics_ops['++'], s.name, ': ')),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(s.message),
+							_1: {ctor: '[]'}
+						}
 					});
 			},
 			model.messages));

@@ -4,6 +4,7 @@ import Model exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
+--import Text exposing (..)
 
 message_input: Model -> Html Msg
 message_input model =
@@ -16,7 +17,7 @@ message_list_div: Model -> Html Msg
 message_list_div model =
   div
   [style [("background-color", "rgba(123, 123, 123, 0.5)"), ("width", "65%"), ("margin", "20pt"), ("border-radius", "6px")]]
-  (List.map (\s -> div [style [("padding", "2pt"), ("color", "magenta")]] [text s]) model.messages)
+  (List.map (\s -> div [style [("padding", "2pt"), ("color", "magenta")]] [node "b" [] [text (s.name++": ")], text s.message]) model.messages)
 
 chat_div: Model -> Html Msg
 chat_div model =

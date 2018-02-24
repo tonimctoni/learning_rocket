@@ -30,12 +30,11 @@ struct Message {
 }
 
 #[post("/post_message", format = "application/json", data = "<message>")]
-fn post_message(messages: State<Arc<Mutex<Vec<String>>>>, message: Json<Message>) -> Json{
-    let Message{name, message}=message.into_inner();
+fn post_message(messages: State<Arc<Mutex<Vec<Message>>>>, message: Json<Message>) -> Json{
     let return_int={
         match messages.lock() {
             Ok(mut messages) => {
-                messages.push(format!("{}: {}", name, message));
+                messages.push(message.into_inner());
                 0
             },
             Err(e) => {
@@ -56,33 +55,36 @@ struct LastMessage {
 }
 
 #[post("/get_messages", format = "application/json", data = "<last_message>")]
-fn get_messages(messages: State<Arc<Mutex<Vec<String>>>>, last_message: Json<LastMessage>) -> Json{
-    const EMPTY_STRING_ARRAY: [String;0] = [];
+fn get_messages(messages: State<Arc<Mutex<Vec<Message>>>>, last_message: Json<LastMessage>) -> Json{
+    const EMPTY_MESSAGE_ARRAY: [Message;0] = [];
     let LastMessage{last_message}=last_message.into_inner();
 
     match messages.lock() {
         Ok(messages) => {
             if messages.len()>last_message{
                 Json(json!({
+                    // "last_message": last_message,
                     "new_messages": messages[last_message..].iter().rev().collect::<Vec<_>>()
                 }))
             } else {
                 Json(json!({
-                    "new_messages": EMPTY_STRING_ARRAY
+                    // "last_message": last_message,
+                    "new_messages": EMPTY_MESSAGE_ARRAY
                 }))
             }
         },
         Err(e) => {
             eprintln!("Error: {:?}", e);
             Json(json!({
-                "new_messages": EMPTY_STRING_ARRAY
+                // "last_message": last_message,
+                "new_messages": EMPTY_MESSAGE_ARRAY
             }))
         },
     }
 }
 
 fn main() {
-    let messages: Arc<Mutex<Vec<String>>>=Arc::new(Mutex::new(Vec::new()));
+    let messages: Arc<Mutex<Vec<Message>>>=Arc::new(Mutex::new(Vec::new()));
     rocket::ignite()
     .mount("/", routes![index, files, post_message, get_messages])
     .manage(messages)
