@@ -37,7 +37,7 @@ update msg model =
     SetMessage s -> ({model | message=s}, Cmd.none)
     OkName -> choose_name model
     GoToChooseName -> ({model | site=ChooseName, status_string="", name=""}, Cmd.none)
-    SendMessage -> (model, send_message model)
+    SendMessage -> (model, if (String.length model.message<1) then Cmd.none else send_message model)
     SendMessageReturn (Ok _) -> ({model | message=""}, get_messages model)
     SendMessageReturn (Err err) -> ({model | status_string="SendMessage Error: "++(http_err_to_string err)}, Cmd.none)
     TimeToCheckForMessages _ -> (model, get_messages model)
