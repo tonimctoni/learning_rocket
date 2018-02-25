@@ -16,8 +16,7 @@ send_message model =
       |> Encode.object
       |> Http.jsonBody
 
-    return_int_decoder = Decode.map (\i -> i)
-      (Decode.field "return_int" Decode.int)
+    return_int_decoder = Decode.int
   in
     Http.send SendMessageReturn (Http.post "/post_message" (body) return_int_decoder)
 

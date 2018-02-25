@@ -4,12 +4,12 @@ import Rest exposing (..)
 import Model exposing (..)
 import Http
 
-choose_name: Model -> Model
+choose_name: Model -> (Model, Cmd Msg)
 choose_name model =
   if String.length model.name>0 && String.length model.name<16 then
-    {model | site=Chat, status_string=""}
+    ({model | site=Chat, status_string=""}, get_messages model)
   else
-    {model | status_string="Name must have between 1 and 15 characters."}
+    ({model | status_string="Name must have between 1 and 15 characters."}, Cmd.none)
 
 http_err_to_string: Http.Error -> String
 http_err_to_string err =
@@ -35,7 +35,7 @@ update msg model =
   case msg of
     SetName s -> ({model | name=s}, Cmd.none)
     SetMessage s -> ({model | message=s}, Cmd.none)
-    OkName -> (choose_name model, get_messages model)
+    OkName -> choose_name model
     GoToChooseName -> ({model | site=ChooseName, status_string="", name=""}, Cmd.none)
     SendMessage -> (model, send_message model)
     SendMessageReturn (Ok _) -> ({model | message=""}, get_messages model)

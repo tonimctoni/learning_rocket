@@ -30,7 +30,7 @@ struct Message {
 }
 
 #[post("/post_message", format = "application/json", data = "<message>")]
-fn post_message(messages: State<Arc<Mutex<Vec<Message>>>>, message: Json<Message>) -> Json{
+fn post_message(messages: State<Arc<Mutex<Vec<Message>>>>, message: Json<Message>) -> Json<i64>{
     let return_int={
         match messages.lock() {
             Ok(mut messages) => {
@@ -44,9 +44,7 @@ fn post_message(messages: State<Arc<Mutex<Vec<Message>>>>, message: Json<Message
         }
     };
 
-    Json(json!({
-        "return_int": return_int
-    }))
+    Json(return_int)
 }
 
 #[derive(Serialize, Deserialize, Debug)]

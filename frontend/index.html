@@ -9073,12 +9073,7 @@ var _user$project$Rest$get_messages = function (model) {
 		A3(_elm_lang$http$Http$post, '/get_messages', body, return_incomming_messages_decoder));
 };
 var _user$project$Rest$send_message = function (model) {
-	var return_int_decoder = A2(
-		_elm_lang$core$Json_Decode$map,
-		function (i) {
-			return i;
-		},
-		A2(_elm_lang$core$Json_Decode$field, 'return_int', _elm_lang$core$Json_Decode$int));
+	var return_int_decoder = _elm_lang$core$Json_Decode$int;
 	var body = _elm_lang$http$Http$jsonBody(
 		_elm_lang$core$Json_Encode$object(
 			{
@@ -9141,11 +9136,19 @@ var _user$project$Update$choose_name = function (model) {
 		_elm_lang$core$String$length(model.name),
 		0) > 0) && (_elm_lang$core$Native_Utils.cmp(
 		_elm_lang$core$String$length(model.name),
-		16) < 0)) ? _elm_lang$core$Native_Utils.update(
-		model,
-		{site: _user$project$Model$Chat, status_string: ''}) : _elm_lang$core$Native_Utils.update(
-		model,
-		{status_string: 'Name must have between 1 and 15 characters.'});
+		16) < 0)) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			model,
+			{site: _user$project$Model$Chat, status_string: ''}),
+		_1: _user$project$Rest$get_messages(model)
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			model,
+			{status_string: 'Name must have between 1 and 15 characters.'}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
 };
 var _user$project$Update$update = F2(
 	function (msg, model) {
@@ -9168,11 +9171,7 @@ var _user$project$Update$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'OkName':
-				return {
-					ctor: '_Tuple2',
-					_0: _user$project$Update$choose_name(model),
-					_1: _user$project$Rest$get_messages(model)
-				};
+				return _user$project$Update$choose_name(model);
 			case 'GoToChooseName':
 				return {
 					ctor: '_Tuple2',
